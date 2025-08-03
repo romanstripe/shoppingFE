@@ -7,7 +7,28 @@ import ToastMessage from "../../common/component/ToastMessage";
 
 export const loginWithEmail = createAsyncThunk(
   "user/loginWithEmail",
-  async ({ email, password }, { rejectWithValue }) => {}
+  async ({ email, password }, { dispatch, rejectWithValue }) => {
+    try {
+      const response = await api.post("/auth/login", { email, password });
+      console.log("받은 토큰:", response.data.token);
+      sessionStorage.setItem("token", response.data.token); //save token
+      dispatch(
+        showToastMessage({
+          message: "Login is completed",
+          status: "success",
+        })
+      );
+      return response.data;
+    } catch (error) {
+      dispatch(
+        showToastMessage({
+          message: "Failed to login",
+          status: "error",
+        })
+      );
+      return rejectWithValue(error.error);
+    }
+  }
 );
 
 export const loginWithGoogle = createAsyncThunk(
@@ -16,6 +37,7 @@ export const loginWithGoogle = createAsyncThunk(
 );
 
 export const logout = () => (dispatch) => {};
+
 export const registerUser = createAsyncThunk(
   "user/registerUser",
   async (
@@ -75,6 +97,19 @@ const userSlice = createSlice({
       })
       .addCase(registerUser.rejected, (state, action) => {
         state.registrationError = action.payload;
+      })
+      .addCase(loginWithEmail.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(loginWithEmail.fulfilled, (state, action) => {
+        state.loading = false;
+        state.user = action.payload.user;
+        state.loginError = null;
+      })
+      .addCase(loginWithEmail.rejected, (state, action) => {
+        state.loading = false;
+        state.loginError =
+          action.payload || "Login failed due to unknown error";
       });
   },
 });

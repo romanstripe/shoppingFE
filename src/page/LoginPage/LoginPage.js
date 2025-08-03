@@ -17,10 +17,9 @@ const Login = () => {
   const [password, setPassword] = useState("");
 
   useEffect(() => {
-    if (loginError) {
-      dispatch(clearErrors());
-    }
-  }, [navigate]);
+    dispatch(clearErrors());
+  }, []); //마운트 될 때마다 에러 없애줌
+
   const handleLoginWithEmail = (event) => {
     event.preventDefault();
     dispatch(loginWithEmail({ email, password }));
@@ -30,9 +29,12 @@ const Login = () => {
     //구글 로그인 하기
   };
 
-  if (user) {
-    navigate("/");
-  }
+  useEffect(() => {
+    if (user) {
+      navigate("/"); // 에러 없애기 위해 useEffect 사용
+    }
+  }, [user, navigate]);
+
   return (
     <>
       <Container className="login-area">
