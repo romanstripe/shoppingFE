@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
 import { showToastMessage } from "../common/uiSlice";
+import { useNavigate, useDispatch } from "react-router-dom";
 import api from "../../utils/api";
 import { initialCart } from "../cart/cartSlice";
 import ToastMessage from "../../common/component/ToastMessage";
@@ -10,7 +11,6 @@ export const loginWithEmail = createAsyncThunk(
   async ({ email, password }, { dispatch, rejectWithValue }) => {
     try {
       const response = await api.post("/auth/login", { email, password });
-      console.log("받은 토큰:", response.data.token);
       sessionStorage.setItem("token", response.data.token); //save token
       dispatch(
         showToastMessage({
@@ -36,7 +36,18 @@ export const loginWithGoogle = createAsyncThunk(
   async (token, { rejectWithValue }) => {}
 );
 
-export const logout = () => (dispatch) => {};
+export const logout = (navigate) => (dispatch) => {
+  sessionStorage.removeItem("token");
+  dispatch({ type: "user/logout" }); //동기 작업이라 Thunk 안씀
+  dispatch(
+    showToastMessage({
+      message: "Logout is completed",
+      status: "success",
+    })
+  );
+  console.log("로그아웃 후 navigate 실행 직전");
+  navigate("/login");
+};
 
 export const registerUser = createAsyncThunk(
   "user/registerUser",
@@ -68,7 +79,15 @@ export const registerUser = createAsyncThunk(
 
 export const loginWithToken = createAsyncThunk(
   "user/loginWithToken",
-  async (_, { rejectWithValue }) => {}
+  async (_, { rejectWithValue }) => {
+    //authorization을 통해 header에 붙여둠
+    try {
+      const response = await api.get("/user/me");
+      return response.data;
+    } catch (error) {
+      return registerUser(error.error);
+    }
+  }
 );
 
 const userSlice = createSlice({
@@ -84,6 +103,9 @@ const userSlice = createSlice({
     clearErrors: (state) => {
       state.loginError = null;
       state.registrationError = null;
+    },
+    logout: (state) => {
+      state.user = null;
     },
   },
   extraReducers: (builder) => {
@@ -110,6 +132,9 @@ const userSlice = createSlice({
         state.loading = false;
         state.loginError =
           action.payload || "Login failed due to unknown error";
+      })
+      .addCase(loginWithToken.fulfilled, (state, action) => {
+        state.user = action.payload.user;
       });
   },
 });
