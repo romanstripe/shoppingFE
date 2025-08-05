@@ -67,12 +67,7 @@ const NewItemDialog = ({ mode, showDialog, setShowDialog }) => {
     if (stock.length === 0) {
       return setStockError(true);
     }
-//이미지를 업로드했는지 확인 
-    //배포 후 에러생겨 alert 사용
-        if (!formData.image) {
-      alert("이미지를 업로드해주세요.");
-      return;
-    }
+
 
     // 재고를 배열에서 객체로 바꿔주기, [['M',2]] 에서 {M:2}로
     const totalStock = stock.reduce((total, item) => {
