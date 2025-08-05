@@ -40,7 +40,7 @@ const Navbar = ({ user }) => {
   const handleLogout = () => {
     dispatch(logout(navigate));
   }; //비동기라 navigate 를 사용할 수 있게 넘겨줘야함
-  
+
   return (
     <div>
       {showSearchBox && (
