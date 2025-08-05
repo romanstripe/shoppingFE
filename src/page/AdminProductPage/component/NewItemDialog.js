@@ -74,14 +74,12 @@ const NewItemDialog = ({ mode, showDialog, setShowDialog }) => {
       return setImageError(true);
     } else {
       setImageError(false);
-    } // 사진 추가하고 나면 에러 삭제
-
+    }
 
     // 재고를 배열에서 객체로 바꿔주기, [['M',2]] 에서 {M:2}로
     const totalStock = stock.reduce((total, item) => {
       return { ...total, [item[0]]: parseInt(item[1]) };
     }, {});
-
     //price and status 는 디폴트가 잇어서 바로저장됨
 
     if (mode === "new") {
