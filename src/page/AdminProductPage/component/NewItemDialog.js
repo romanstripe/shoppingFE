@@ -31,7 +31,7 @@ const NewItemDialog = ({ mode, showDialog, setShowDialog }) => {
   const [stock, setStock] = useState([]);
   const dispatch = useDispatch();
   const [stockError, setStockError] = useState(false);
-
+  const [imageError, setImageError] = useState(false);
   useEffect(() => {
     if (success) setShowDialog(false);
   }, [success]);
@@ -66,13 +66,21 @@ const NewItemDialog = ({ mode, showDialog, setShowDialog }) => {
     //재고를 입력했는지 확인, 아니면 에러
     if (stock.length === 0) {
       return setStockError(true);
-    }
+    } else {
+      setStockError(false);
+    } // 재고 추가하고 나면 에러 삭제
+
+    if (!formData.image || formData.image.trim() === "") {
+      return setImageError(true);
+    } else {
+      setImageError(false);
+    } // 사진 추가하고 나면 에러 삭제
 
     // 재고를 배열에서 객체로 바꿔주기, [['M',2]] 에서 {M:2}로
     const totalStock = stock.reduce((total, item) => {
       return { ...total, [item[0]]: parseInt(item[1]) };
     }, {});
-    setStockError(false); // 재고 추가하고 나면 에러 삭제
+
     //price and status 는 디폴트가 잇어서 바로저장됨
 
     if (mode === "new") {
@@ -252,6 +260,9 @@ const NewItemDialog = ({ mode, showDialog, setShowDialog }) => {
 
         <Form.Group className="mb-3" controlId="Image" required>
           <Form.Label>Image</Form.Label>
+          {imageError && (
+            <span className="error-message">사진을 추가해주세요</span>
+          )}
           <CloudinaryUploadWidget uploadImage={uploadImage} />
 
           <img
