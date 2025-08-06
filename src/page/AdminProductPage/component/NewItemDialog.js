@@ -32,6 +32,24 @@ const NewItemDialog = ({ mode, showDialog, setShowDialog }) => {
   const dispatch = useDispatch();
   const [stockError, setStockError] = useState(false);
   const [imageError, setImageError] = useState(false);
+  const [skuError, setSkuError] = useState(false);
+
+  const { productList } = useSelector((state) => state.product);
+  const isSkuDuplicate = (sku) => {
+    return productList.some((product) => {
+      if (mode === "new") {
+        // 새로운 상품 등록 시, 동일한 SKU가 이미 있으면 중복
+        return product.sku.toLowerCase() === sku.toLowerCase();
+      } else {
+        // 수정 모드일 경우, 자기 자신을 제외하고 비교
+        return (
+          product.sku.toLowerCase() === sku.toLowerCase() &&
+          product._id !== selectedProduct._id
+        );
+      }
+    });
+  };
+
   useEffect(() => {
     if (success) setShowDialog(false);
   }, [success]);
@@ -64,6 +82,7 @@ const NewItemDialog = ({ mode, showDialog, setShowDialog }) => {
   const handleSubmit = (event) => {
     event.preventDefault();
     //재고를 입력했는지 확인, 아니면 에러
+
     if (stock.length === 0) {
       return setStockError(true);
     } else {
@@ -74,6 +93,12 @@ const NewItemDialog = ({ mode, showDialog, setShowDialog }) => {
       return setImageError(true);
     } else {
       setImageError(false);
+    }
+
+    if (isSkuDuplicate(formData.sku)) {
+      return setSkuError(true);
+    } else {
+      setSkuError(false);
     }
 
     // 재고를 배열에서 객체로 바꿔주기, [['M',2]] 에서 {M:2}로
@@ -162,6 +187,12 @@ const NewItemDialog = ({ mode, showDialog, setShowDialog }) => {
         <Row className="mb-3">
           <Form.Group as={Col} controlId="sku">
             <Form.Label>Sku</Form.Label>
+            {skuError && (
+              <span className="error-message text-danger">
+                {" "}
+                동일한 Sku 가 있습니다.
+              </span>
+            )}
             <Form.Control
               onChange={handleChange}
               type="string"
@@ -199,7 +230,7 @@ const NewItemDialog = ({ mode, showDialog, setShowDialog }) => {
         <Form.Group className="mb-3" controlId="stock">
           <Form.Label className="mr-1">Stock</Form.Label>
           {stockError && (
-            <span className="error-message">재고를 추가해주세요</span>
+            <span className="error-message"> 재고를 추가해주세요</span>
           )}
           <Button size="sm" onClick={addStock}>
             Add +
@@ -260,7 +291,7 @@ const NewItemDialog = ({ mode, showDialog, setShowDialog }) => {
         <Form.Group className="mb-3" controlId="Image" required>
           <Form.Label>Image</Form.Label>
           {imageError && (
-            <span className="error-message">사진을 추가해주세요</span>
+            <span className="error-message"> 사진을 추가해주세요</span>
           )}
           <CloudinaryUploadWidget uploadImage={uploadImage} />
 

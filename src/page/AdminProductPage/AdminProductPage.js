@@ -38,15 +38,24 @@ const AdminProductPage = () => {
 
   //상품리스트 가져오기 (url쿼리 맞춰서)
   useEffect(() => {
-    dispatch(getProductList());
-  }, []);
+    dispatch(getProductList({ ...searchQuery }));
+  }, [query]);
 
   useEffect(() => {
-    //검색어나 페이지가 바뀌면 url바꿔주기 (검색어또는 페이지가 바뀜 => url 바꿔줌=> url쿼리 읽어옴=> 이 쿼리값 맞춰서  상품리스트 가져오기)
+    //검색어나 페이지가 바뀌면 url바꿔주기
+    //(검색어또는 페이지가 바뀜 => url 바꿔줌=> url쿼리 읽어옴=>
+    // 이 쿼리값 맞춰서  상품리스트 가져오기)
+
+    if (searchQuery.name === "") {
+      delete searchQuery.name;
+    }
+    const params = new URLSearchParams(searchQuery); //객체를 쿼리형태로 변환
+    const query = params.toString();
+    navigate("?" + query);
   }, [searchQuery]);
 
   const deleteItem = (id) => {
-    //아이템 삭제하가ㅣ
+    //아이템 삭제하기
   };
 
   const openEditForm = (product) => {
@@ -63,6 +72,7 @@ const AdminProductPage = () => {
 
   const handlePageClick = ({ selected }) => {
     //  쿼리에 페이지값 바꿔주기
+    setSearchQuery({ ...searchQuery, page: selected + 1 });
   };
 
   return (
@@ -90,7 +100,7 @@ const AdminProductPage = () => {
           nextLabel="next >"
           onPageChange={handlePageClick}
           pageRangeDisplayed={5}
-          pageCount={100}
+          pageCount={totalPageNum}
           forcePage={searchQuery.page - 1}
           previousLabel="< previous"
           renderOnZeroPageCount={null}

@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import ProductCard from "./components/ProductCard";
-import { Row, Col, Container } from "react-bootstrap";
+import { Row, Col, Container, Spinner } from "react-bootstrap";
 import { useSearchParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { getProductList } from "../../features/product/productSlice";
@@ -33,7 +33,7 @@ const LandingPage = () => {
             {name === "" ? (
               <h2>등록된 상품이 없습니다!</h2>
             ) : (
-              <h2>{name}과 일치한 상품이 없습니다!`</h2>
+              <h2>{name}과 일치한 상품이 없습니다!</h2>
             )}
           </div>
         )}
