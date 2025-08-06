@@ -83,23 +83,32 @@ const NewItemDialog = ({ mode, showDialog, setShowDialog }) => {
     event.preventDefault();
     //재고를 입력했는지 확인, 아니면 에러
 
+    let hasError = false;
+    //if 문 순서때문에 이전거 에러생기면 이후거 에러 고쳐도 안고쳐짐
+
     if (stock.length === 0) {
-      return setStockError(true);
+      setStockError(true);
+      hasError = true;
     } else {
       setStockError(false);
-    } // 재고 추가하고 나면 에러 삭제
+    }
 
     if (!formData.image || formData.image.trim() === "") {
-      return setImageError(true);
+      setImageError(true);
+      hasError = true;
     } else {
       setImageError(false);
     }
 
     if (isSkuDuplicate(formData.sku)) {
-      return setSkuError(true);
+      setSkuError(true);
+      hasError = true;
     } else {
       setSkuError(false);
     }
+
+    //하나라도 에러가 있으면 함수 종료
+    if (hasError) return;
 
     // 재고를 배열에서 객체로 바꿔주기, [['M',2]] 에서 {M:2}로
     const totalStock = stock.reduce((total, item) => {
