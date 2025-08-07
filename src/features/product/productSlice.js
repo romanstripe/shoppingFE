@@ -14,14 +14,22 @@ export const getProductList = createAsyncThunk(
 
       return response.data;
     } catch (error) {
-      rejectWithValue(error.error);
+      return rejectWithValue(error.error);
     }
   }
 );
 
 export const getProductDetail = createAsyncThunk(
   "products/getProductDetail",
-  async (id, { rejectWithValue }) => {}
+  async (id, { rejectWithValue }) => {
+    try {
+      const response = await api.get(`/product/${id}`);
+      if (response.status !== 200) throw new Error(response.error);
+      return response.data.data;
+    } catch (error) {
+      return rejectWithValue(error.error);
+    }
+  }
 );
 
 export const createProduct = createAsyncThunk(

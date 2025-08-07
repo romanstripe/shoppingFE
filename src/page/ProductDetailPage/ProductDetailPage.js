@@ -42,6 +42,7 @@ const ProductDetail = () => {
         colors={["#e15b64", "#f47e60", "#f8b26a", "#abbd81", "#849b87"]}
       />
     );
+
   return (
     <Container className="product-detail-card">
       <Row>
@@ -51,7 +52,7 @@ const ProductDetail = () => {
         <Col className="product-info-area" sm={6}>
           <div className="product-info">{selectedProduct.name}</div>
           <div className="product-info">
-            ₩ {currencyFormat(selectedProduct.price)}
+            $ {currencyFormat(selectedProduct.price)}
           </div>
           <div className="product-info">{selectedProduct.description}</div>
 
