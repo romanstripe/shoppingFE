@@ -21,7 +21,7 @@ const InitialFormData = {
   price: 0,
 };
 
-const NewItemDialog = ({ mode, showDialog, setShowDialog }) => {
+const NewItemDialog = ({ mode, showDialog, setShowDialog, currentPage }) => {
   const { error, success, selectedProduct } = useSelector(
     (state) => state.product
   );
@@ -31,6 +31,7 @@ const NewItemDialog = ({ mode, showDialog, setShowDialog }) => {
   const [stock, setStock] = useState([]);
   const dispatch = useDispatch();
   const [stockError, setStockError] = useState(false);
+  const [stockNumError, setStockNumError] = useState(false);
   const [imageError, setImageError] = useState(false);
   const [skuError, setSkuError] = useState(false);
 
@@ -77,6 +78,12 @@ const NewItemDialog = ({ mode, showDialog, setShowDialog }) => {
   const handleClose = () => {
     //모든걸 초기화시키고;
     // 다이얼로그 닫아주기
+    setShowDialog(false);
+    setFormData(InitialFormData); // 초기 상태로 리셋
+    setStock([]);
+    setStockError(false);
+    setImageError(false);
+    setSkuError(false);
   };
 
   const handleSubmit = (event) => {
@@ -118,9 +125,23 @@ const NewItemDialog = ({ mode, showDialog, setShowDialog }) => {
 
     if (mode === "new") {
       //새 상품 만들기
-      dispatch(createProduct({ ...formData, stock: totalStock }));
+      dispatch(createProduct({ ...formData, stock: totalStock }))
+        .unwrap()
+        .then(() => handleClose())
+        .catch((err) => console.error("등록 실패", err));
     } else {
       // 상품 수정하기
+      dispatch(
+        editProduct({
+          ...formData,
+          stock: totalStock,
+          id: selectedProduct._id,
+          page: currentPage,
+        })
+      )
+        .unwrap()
+        .then(() => handleClose())
+        .catch((err) => console.error("수정 실패", err));
     }
   };
 
@@ -198,8 +219,8 @@ const NewItemDialog = ({ mode, showDialog, setShowDialog }) => {
             <Form.Label>Sku</Form.Label>
             {skuError && (
               <span className="error-message text-danger">
-                {" "}
-                동일한 Sku 가 있습니다.
+                {"  "}
+                이미 등록된 상품 코드입니다.
               </span>
             )}
             <Form.Control
@@ -239,7 +260,10 @@ const NewItemDialog = ({ mode, showDialog, setShowDialog }) => {
         <Form.Group className="mb-3" controlId="stock">
           <Form.Label className="mr-1">Stock</Form.Label>
           {stockError && (
-            <span className="error-message"> 재고를 추가해주세요</span>
+            <span className="error-message text-danger">
+              {"  "}
+              재고를 추가해주세요.
+            </span>
           )}
           <Button size="sm" onClick={addStock}>
             Add +
@@ -277,6 +301,7 @@ const NewItemDialog = ({ mode, showDialog, setShowDialog }) => {
                     onChange={(event) =>
                       handleStockChange(event.target.value, index)
                     }
+                    min="0" //음수 안됨
                     type="number"
                     placeholder="number of stock"
                     value={item[1]}
@@ -300,7 +325,10 @@ const NewItemDialog = ({ mode, showDialog, setShowDialog }) => {
         <Form.Group className="mb-3" controlId="Image" required>
           <Form.Label>Image</Form.Label>
           {imageError && (
-            <span className="error-message"> 사진을 추가해주세요</span>
+            <span className="error-message text-danger">
+              {"  "}
+              사진을 추가해주세요.
+            </span>
           )}
           <CloudinaryUploadWidget uploadImage={uploadImage} />
 
