@@ -45,8 +45,8 @@ export const logout = (navigate) => (dispatch) => {
       status: "success",
     })
   );
-  console.log("로그아웃 후 navigate 실행 직전");
-  navigate("/login");
+  //navigate("/login");
+  //로그아웃 하고 로그인으로 네비게이트 해야한단 조건이 없어서 주석
 };
 
 export const registerUser = createAsyncThunk(

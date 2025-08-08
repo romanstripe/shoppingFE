@@ -143,6 +143,7 @@ const NewItemDialog = ({ mode, showDialog, setShowDialog, currentPage }) => {
         .then(() => handleClose())
         .catch((err) => console.error("수정 실패", err));
     }
+    console.log("totalStock to send:", totalStock);
   };
 
   const handleChange = (event) => {
@@ -152,7 +153,7 @@ const NewItemDialog = ({ mode, showDialog, setShowDialog, currentPage }) => {
 
   const addStock = () => {
     //재고타입 추가시 배열에 새 배열 추가
-    setStock([...stock, []]);
+    setStock([...stock, ["", ""]]);
   };
 
   const deleteStock = (idx) => {
@@ -169,7 +170,6 @@ const NewItemDialog = ({ mode, showDialog, setShowDialog, currentPage }) => {
   };
 
   const handleStockChange = (value, index) => {
-    //재고 수량 변환하기
     const newStock = [...stock];
     newStock[index][1] = value;
     setStock(newStock);
@@ -302,9 +302,10 @@ const NewItemDialog = ({ mode, showDialog, setShowDialog, currentPage }) => {
                       handleStockChange(event.target.value, index)
                     }
                     min="0" //음수 안됨
-                    type="number"
+                    type="number" //타입이 넘버라 온휠 적용됨
+                    onWheel={(event) => event.target.blur()} //다이알로그내린게 스톡재고에 반영되는걸 막음
                     placeholder="number of stock"
-                    value={item[1]}
+                    value={item[1] === undefined ? "" : item[1]}
                     required
                   />
                 </Col>
