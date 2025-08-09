@@ -6,13 +6,15 @@ import CartProductCard from "./component/CartProductCard";
 import OrderReceipt from "../PaymentPage/component/OrderReceipt";
 import "./style/cart.style.css";
 import { getCartList } from "../../features/cart/cartSlice";
+import { car } from "@cloudinary/url-gen/qualifiers/focusOn";
 
 const CartPage = () => {
   const dispatch = useDispatch();
   const { cartList, totalPrice } = useSelector((state) => state.cart);
 
   useEffect(() => {
-    //카트리스트 불러오기
+    //카트리스트 불러오기 - db는 dispatch
+    dispatch(getCartList());
   }, []);
 
   return (
@@ -31,7 +33,7 @@ const CartPage = () => {
           )}
         </Col>
         <Col xs={12} md={5}>
-          <OrderReceipt />
+          <OrderReceipt cartList={cartList} totalPrice={totalPrice} />
         </Col>
       </Row>
     </Container>

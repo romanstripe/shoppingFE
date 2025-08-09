@@ -3,7 +3,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { showToastMessage } from "../common/uiSlice";
 import { useNavigate, useDispatch } from "react-router-dom";
 import api from "../../utils/api";
-import { initialCart } from "../cart/cartSlice";
+import { initialCart, getCartQty } from "../cart/cartSlice";
 import ToastMessage from "../../common/component/ToastMessage";
 
 export const loginWithEmail = createAsyncThunk(
@@ -39,6 +39,7 @@ export const loginWithGoogle = createAsyncThunk(
 export const logout = (navigate) => (dispatch) => {
   sessionStorage.removeItem("token");
   dispatch({ type: "user/logout" }); //동기 작업이라 Thunk 안씀
+  dispatch(initialCart()); //getQty 하면 유저아이디 필요하니까 이니셜로 비우기
   dispatch(
     showToastMessage({
       message: "Logout is completed",
