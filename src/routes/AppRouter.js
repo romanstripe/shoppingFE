@@ -20,6 +20,7 @@ const AppRouter = () => {
       <Route path="/register" element={<RegisterPage />} />
       <Route path="/product/:id" element={<ProductDetail />} />
       <Route element={<PrivateRoute permissionLevel="customer" />}>
+        {/* 여기서 customer level 로 묶여있어 로그아웃 한 상태로 결제창에 못옴 */}
         <Route path="/cart" element={<CartPage />} />
         <Route path="/payment" element={<PaymentPage />} />
         <Route path="/payment/success" element={<OrderCompletePage />} />

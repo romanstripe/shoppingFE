@@ -56,11 +56,12 @@ export const deleteCartItem = createAsyncThunk(
   async (id, { rejectWithValue, dispatch }) => {
     try {
       const response = await api.delete(`/cart/${id}`);
+      console.log("Delete response:", response);
       if (response.status !== 200) throw new Error(response.error);
-      dispatch(getCartList());
-      dispatch(getCartQty());
+      await dispatch(getCartList()).unwrap();
       return response.data.data;
     } catch (error) {
+      console.error("Delete error:", error);
       return rejectWithValue(error.error);
     }
   }
@@ -124,6 +125,9 @@ const cartSlice = createSlice({
         state.loading = false;
         state.error = "";
         state.cartList = action.payload;
+        state.cartItemCount = action.payload.length;
+        //쇼핑백 내에서 1=>0으로 전환이 안일어났음...=
+
         state.totalPrice = action.payload.reduce(
           (total, item) => total + item.productId.price * item.qty,
           0
