@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { getCartQty } from "../cart/cartSlice";
+import { initialCart, getCartList } from "../cart/cartSlice";
 import api from "../../utils/api";
 import { showToastMessage } from "../common/uiSlice";
 
@@ -19,9 +19,17 @@ export const createOrder = createAsyncThunk(
   async (payload, { dispatch, rejectWithValue }) => {
     try {
       const response = await api.post("/order", payload);
-      if (response !== 200) throw new Error(response.error);
+      if (response.status !== 200) throw new Error(response.error);
+      dispatch(initialCart()); // cartItemCount 0
+      dispatch(getCartList()); // cartList도 빈 배열로 갱신
       return response.data.orderNum;
     } catch (error) {
+      dispatch(
+        showToastMessage({
+          status: "error",
+          message: error.error,
+        })
+      );
       return rejectWithValue(error.error);
     }
   }
