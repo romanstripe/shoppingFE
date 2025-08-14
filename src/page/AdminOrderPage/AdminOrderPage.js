@@ -81,7 +81,7 @@ const AdminOrderPage = () => {
         <ReactPaginate
           nextLabel="next >"
           onPageChange={handlePageClick}
-          pageRangeDisplayed={5}
+          pageRangeDisplayed={3}
           pageCount={totalPageNum}
           forcePage={searchQuery.page - 1}
           previousLabel="< previous"
@@ -101,7 +101,13 @@ const AdminOrderPage = () => {
         />
       </Container>
 
-      {open && <OrderDetailDialog open={open} handleClose={handleClose} />}
+      {open && (
+        <OrderDetailDialog
+          open={open}
+          handleClose={handleClose}
+          currentPage={searchQuery.page}
+        />
+      )}
     </div>
   );
 };
