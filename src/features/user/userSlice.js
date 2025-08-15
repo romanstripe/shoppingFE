@@ -33,7 +33,28 @@ export const loginWithEmail = createAsyncThunk(
 
 export const loginWithGoogle = createAsyncThunk(
   "user/loginWithGoogle",
-  async (token, { rejectWithValue }) => {}
+  async (token, { rejectWithValue, dispatch }) => {
+    try {
+      const response = await api.post("/auth/google", { token });
+      if (response.status !== 200) throw new Error(response.error);
+      sessionStorage.setItem("token", response.data.token); //save token
+      dispatch(
+        showToastMessage({
+          message: "Login is completed",
+          status: "success",
+        })
+      );
+      return response.data.user;
+    } catch (error) {
+      dispatch(
+        showToastMessage({
+          message: "Failed to login",
+          status: "error",
+        })
+      );
+      return rejectWithValue(error.error);
+    }
+  }
 );
 
 export const logout = (navigate) => (dispatch) => {
@@ -131,11 +152,22 @@ const userSlice = createSlice({
       })
       .addCase(loginWithEmail.rejected, (state, action) => {
         state.loading = false;
-        state.loginError =
-          action.payload || "Login failed due to unknown error";
+        state.loginError = action.payload;
       })
       .addCase(loginWithToken.fulfilled, (state, action) => {
         state.user = action.payload.user;
+      })
+      .addCase(loginWithGoogle.pending, (state, action) => {
+        state.loading = true;
+      })
+      .addCase(loginWithGoogle.fulfilled, (state, action) => {
+        state.loading = false;
+        state.user = action.payload;
+        state.loginError = null;
+      })
+      .addCase(loginWithGoogle.rejected, (state, action) => {
+        state.loading = false;
+        state.loginError = action.payload;
       });
   },
 });
