@@ -4,6 +4,7 @@ import { faUser } from "@fortawesome/free-regular-svg-icons";
 import {
   faBars,
   faBox,
+  faSort,
   faSearch,
   faShoppingBag,
 } from "@fortawesome/free-solid-svg-icons";
@@ -19,6 +20,7 @@ const Navbar = ({ user }) => {
   const isMobile = window.navigator.userAgent.indexOf("Mobile") !== -1;
   const [showSearchBox, setShowSearchBox] = useState(false);
   const [sortDropdownOpen, setSortDropdownOpen] = useState(false);
+  const [showSortOptions, setshowSortOptions] = useState(false);
 
   const menuList = [
     "여성",
@@ -63,66 +65,76 @@ const Navbar = ({ user }) => {
   };
   return (
     <div>
-      <div className="search-sort-wrapper">
-        <div className="sort-area">
-          <button
-            onClick={() => setSortDropdownOpen(!sortDropdownOpen)}
-            className={`sort-button ${sort ? "selected" : ""}`}
-          >
-            {[
-              { value: "recommended", label: "추천순" },
-              { value: "latest", label: "최신순" },
-              { value: "lowPrice", label: "낮은 가격순" },
-              { value: "highPrice", label: "높은 가격순" },
-            ].find((o) => o.value === sort)?.label || "정렬하기"}{" "}
-            ▼
-          </button>
-
-          {sortDropdownOpen && (
-            <div className="sort-options">
-              {[
-                { value: "recommended", label: "추천순" },
-                { value: "latest", label: "최신순" },
-                { value: "lowPrice", label: "낮은 가격순" },
-                { value: "highPrice", label: "높은 가격순" },
-              ].map((o) => (
-                <div
-                  key={o.value}
-                  onClick={() => {
-                    handleSortChange(o.value);
-                    setSortDropdownOpen(false);
-                  }}
-                  className={`sort-option ${
-                    sort === o.value ? "selected" : ""
-                  }`}
-                >
-                  {o.label}
-                </div>
-              ))}
+      {showSearchBox && (
+        <div className="display-space-between mobile-search-box w-100">
+          <div className="search display-space-between w-100">
+            <div>
+              <FontAwesomeIcon className="search-icon" icon={faSearch} />
+              <input
+                type="text"
+                placeholder="제품검색"
+                onKeyPress={onCheckEnter}
+              />
             </div>
-          )}
-        </div>
-        {showSearchBox && (
-          <div className="display-space-between mobile-search-box w-100">
-            <div className="search display-space-between w-100">
-              <div>
-                <FontAwesomeIcon className="search-icon" icon={faSearch} />
-                <input
-                  type="text"
-                  placeholder="제품검색"
-                  onKeyPress={onCheckEnter}
-                />
-              </div>
-              <button
-                className="closebtn"
-                onClick={() => setShowSearchBox(false)}
-              >
-                &times;
-              </button>
-            </div>
+            <button
+              className="closebtn"
+              onClick={() => setShowSearchBox(false)}
+            >
+              &times;
+            </button>
           </div>
-        )}
-      </div>
+        </div>
+      )}
+
+      {showSortOptions && (
+        <div className="display-space-between mobile-search-box w-100">
+          <div className="sort display-space-between w-100">
+            <div className="sort-area">
+              <button
+                onClick={() => setSortDropdownOpen(!sortDropdownOpen)}
+                className={`sort-button ${sort ? "selected" : ""}`}
+              >
+                {[
+                  { value: "recommended", label: "추천순" },
+                  { value: "latest", label: "최신순" },
+                  { value: "lowPrice", label: "낮은 가격순" },
+                  { value: "highPrice", label: "높은 가격순" },
+                ].find((o) => o.value === sort)?.label || "정렬하기"}
+              </button>
+
+              {sortDropdownOpen && (
+                <div className="sort-options">
+                  {[
+                    { value: "recommended", label: "추천순" },
+                    { value: "latest", label: "최신순" },
+                    { value: "lowPrice", label: "낮은 가격순" },
+                    { value: "highPrice", label: "높은 가격순" },
+                  ].map((o) => (
+                    <div
+                      key={o.value}
+                      onClick={() => {
+                        handleSortChange(o.value);
+                        setSortDropdownOpen(false);
+                      }}
+                      className={`sort-option ${
+                        sort === o.value ? "selected" : ""
+                      }`}
+                    >
+                      {o.label}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+            <button
+              className="closebtn"
+              onClick={() => setshowSortOptions(false)}
+            >
+              &times;
+            </button>
+          </div>
+        </div>
+      )}
 
       <div className="side-menu" style={{ width: width }}>
         <button className="closebtn" onClick={() => setWidth(0)}>
@@ -176,9 +188,19 @@ const Navbar = ({ user }) => {
               <FontAwesomeIcon icon={faBox} />
               {!isMobile && <span style={{ cursor: "pointer" }}>내 주문</span>}
             </div>
+
             {isMobile && (
               <div className="nav-icon" onClick={() => setShowSearchBox(true)}>
                 <FontAwesomeIcon icon={faSearch} />
+              </div>
+            )}
+
+            {isMobile && (
+              <div
+                className="nav-icon"
+                onClick={() => setshowSortOptions(true)}
+              >
+                <FontAwesomeIcon icon={faSort} />
               </div>
             )}
           </div>
@@ -208,6 +230,49 @@ const Navbar = ({ user }) => {
               placeholder="제품검색"
               onKeyPress={onCheckEnter}
             />
+          </div>
+        )}
+
+        {!isMobile && (
+          <div>
+            <div className="sort-area landing-sort-box ">
+              <FontAwesomeIcon icon={faSort} />
+              <button
+                onClick={() => setSortDropdownOpen(!sortDropdownOpen)}
+                className={`sort-button ${sort ? "selected" : ""}`}
+              >
+                {[
+                  { value: "recommended", label: "추천순" },
+                  { value: "latest", label: "최신순" },
+                  { value: "lowPrice", label: "낮은 가격순" },
+                  { value: "highPrice", label: "높은 가격순" },
+                ].find((o) => o.value === sort)?.label || "정렬하기"}
+              </button>
+
+              {sortDropdownOpen && (
+                <div className="sort-options">
+                  {[
+                    { value: "recommended", label: "추천순" },
+                    { value: "latest", label: "최신순" },
+                    { value: "lowPrice", label: "낮은 가격순" },
+                    { value: "highPrice", label: "높은 가격순" },
+                  ].map((o) => (
+                    <div
+                      key={o.value}
+                      onClick={() => {
+                        handleSortChange(o.value);
+                        setSortDropdownOpen(false);
+                      }}
+                      className={`sort-option ${
+                        sort === o.value ? "selected" : ""
+                      }`}
+                    >
+                      {o.label}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
         )}
       </div>
