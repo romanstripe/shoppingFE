@@ -234,8 +234,8 @@ const Navbar = ({ user }) => {
         )}
 
         {!isMobile && (
-          <div>
-            <div className="sort-area landing-sort-box ">
+          <div className="sort-area">
+            <div className="landing-sort-box ">
               <FontAwesomeIcon icon={faSort} />
               <button
                 onClick={() => setSortDropdownOpen(!sortDropdownOpen)}
