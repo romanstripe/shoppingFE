@@ -88,7 +88,7 @@ const Navbar = ({ user }) => {
 
       {showSortOptions && (
         <div className="display-space-between mobile-search-box w-100">
-          <div className="sort display-space-between w-100">
+          <div className="sort display-space-between w-200">
             <div className="sort-area">
               <button
                 onClick={() => setSortDropdownOpen(!sortDropdownOpen)}

@@ -96,9 +96,9 @@ body {
 }
 
 .landing-sort-box {
-  right: 295px;
+  right: 300px;
   position: absolute;
-  transform: translateY(-10px);
+  top: 175px;
 }
 
 .sidebar {
