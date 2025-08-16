@@ -12,10 +12,13 @@ const LandingPage = () => {
   const productList = useSelector((state) => state.product.productList);
   const [query] = useSearchParams();
   const name = query.get("name");
+  const sort = query.get("sort") || "recommended"; // 기본값
+
   useEffect(() => {
     dispatch(
       getProductList({
         name,
+        sort,
       })
     );
   }, [query]);

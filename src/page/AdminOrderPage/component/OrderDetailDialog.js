@@ -25,8 +25,6 @@ const OrderDetailDialog = ({ open, handleClose, currentPage }) => {
     handleClose();
   };
 
-  console.log("selected data:", selectedOrder);
-
   if (!selectedOrder) {
     return <></>;
   }

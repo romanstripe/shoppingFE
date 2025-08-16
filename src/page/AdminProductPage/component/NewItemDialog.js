@@ -143,7 +143,6 @@ const NewItemDialog = ({ mode, showDialog, setShowDialog, currentPage }) => {
         .then(() => handleClose())
         .catch((err) => console.error("수정 실패", err));
     }
-    console.log("totalStock to send:", totalStock);
   };
 
   const handleChange = (event) => {
